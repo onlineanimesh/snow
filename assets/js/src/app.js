@@ -1,3 +1,27 @@
+baseURL = window.location.origin;
+currentURL = document.location.href;
+
+/**
+ * Onload set scroll bar to bottom of the scrollable container 
+ * @param {DOM element object} el 
+ */
+function scrollToBottom(el) {
+	var $scrollableArea = $(el);
+	$scrollableArea.scrollTop($scrollableArea[0].scrollHeight);
+}
+
+function getQueryString() {
+	var vars = [], hash;
+	var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+	for (var i = 0; i < hashes.length; i++) {
+		hash = hashes[i].split('=');
+		vars.push(hash[0]);
+		vars[hash[0]] = hash[1];
+	}
+	return vars;
+}
+
+
 /**
  * ------------------------------------------------------------------------------
  * DOM Interaction (Ready/Load, Click, Hover, Change)
@@ -8,19 +32,29 @@
  function initPage(){
 	var pageId = $('body').attr('data-page-id') ? $('body').attr('data-page-id') : '';
 	if(pageId==''){
+		requiredAuth();
 		alert("Warning! Unable to process your request\n.data-page-id attribute is not found in body tag.");
 	}
 	console.log("DOM Init #### data-page-id = "+pageId);	
 	
 	if(pageId == 'login'){
-		renderLogin();
+		//auth();
+		domRenderLogin();
 	}
 	if(pageId == 'operation'){
-		renderOperation();
+		requiredAuth();
+		domRenderOperation();
 	}
  }
  
- function renderLogin(){
+ function requiredAuth(){
+	 if(sessionStorage.getItem('sess_username')== null || sessionStorage.getItem('sess_username') == ''){
+		window.location.href = "index.html"; 
+	 }
+ }
+ 
+ 
+ function domRenderLogin(){
 	console.log("renderLogin");
 	/**
 	*
@@ -72,7 +106,7 @@
 	}
  }
  
- function renderOperation(){	
+ function domRenderOperation(){	
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = 'mock_data/all.json';
