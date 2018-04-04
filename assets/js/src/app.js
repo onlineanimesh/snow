@@ -21,23 +21,42 @@ function getQueryString() {
 	return vars;
 }
 
+/**
+ * Time format AM, PM
+ * @param {*} date 
+ */
+function formatAMPM(date) {
+	var hours = date.getHours();
+	var minutes = date.getMinutes();
+	var seconds = date.getSeconds();
+	var ampm = hours >= 12 ? 'pm' : 'am';
+	hours = hours % 12;
+	hours = hours ? hours : 12; // the hour '0' should be '12'
+	minutes = minutes < 10 ? '0' + minutes : minutes;
+	seconds = seconds < 10 ? '0' + seconds : seconds;
+	var strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+	//var strTime = '<span><span class="h1">' + hours + '</span>:<span class="h3">' + minutes + '</span><sup><span class="h6 text-danger">' + seconds + '</span> ' + ampm + '</sup></span>';
+	//var strTime = hours + ':' + minutes + ' ' + ampm;
+	return strTime;
+}
+
 
 /**
  * ------------------------------------------------------------------------------
  * DOM Interaction (Ready/Load, Click, Hover, Change)
  * ------------------------------------------------------------------------------
  */
- $(initPage); // Document Ready Handler
- 
- function initPage(){
+$(initPage); // Document Ready Handler
+
+function initPage() {
 	var pageId = $('body').attr('data-page-id') ? $('body').attr('data-page-id') : '';
-	if(pageId==''){
+	if (pageId == '') {
 		requiredAuth();
 		alert("Warning! Unable to process your request\n.data-page-id attribute is not found in body tag.");
 	}
-	console.log("DOM Init #### data-page-id = "+pageId);	
-	
-	if(pageId == 'login'){
+	console.log("DOM Init #### data-page-id = " + pageId);
+
+	if (pageId == 'login') {
 		//auth();
 		/**
 		*
@@ -46,34 +65,34 @@ function getQueryString() {
 		*/
 		var elBtnLogin = '#btnLogin';
 		var elFrmLogin = '#frmLogin';
-		
-		$(elBtnLogin).on('click',doLogin);
-	}	
-	
-	if(pageId == 'operation'){
+
+		$(elBtnLogin).on('click', doLogin);
+	}
+
+	if (pageId == 'operation') {
 		requiredAuth();
-		
+
 		// Load Data
 		loadOperationPageData();
-		
+
 		// On Clicking Create Batch
-		$('#btnCreateBatch').on('click',createBatch);
+		$('#btnCreateBatch').on('click', createBatch);
 	}
- }
- 
- 
- 
- function loadOperationPageData(){
+}
+
+
+
+function loadOperationPageData() {
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = 'mock_data/all.json';
-	xhr.data = {username: sessionStorage.getItem('sess_username'), password:sessionStorage.getItem('sess_password')};
+	xhr.data = { username: sessionStorage.getItem('sess_username'), password: sessionStorage.getItem('sess_password') };
 	var promise = xhr.init();
 
 	promise.done(function (data) {
 		$.each(data, function (index, value) {
 			// APPEND OR INSERT DATA TO SELECT ELEMENT.
-			$('#tableName').append('<option value="' + value.id + '">' + value.name + '</option>');
+			$('#tableName').append('<option data-type="' + value.type + '" value="' + value.id + '">' + value.name + '</option>');
 		});
 	});
 	promise.done(function (data) {
@@ -92,25 +111,25 @@ function getQueryString() {
 	promise.always(function () {
 		//do more on complete
 	});
- }
- 
- function doLogin(e){
+}
+
+function doLogin(e) {
 	e.preventDefault();
 	var postUsername = $("#username").val();
 	var postPassword = $("#password").val();
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = 'mock_data/user.json';
-	xhr.data = {username: postUsername, password: postPassword};
+	xhr.data = { username: postUsername, password: postPassword };
 	var promise = xhr.init();
 
 	promise.done(function (data) {
 		//console.log(data);
-		$.each(data, function(i,user){
+		$.each(data, function (i, user) {
 			//console.log(user.username);
-			if( (user.username == postUsername) && (user.password == postPassword) ){
-				sessionStorage.setItem('sess_username',postUsername);
-				sessionStorage.setItem('sess_password',postPassword);
+			if ((user.username == postUsername) && (user.password == postPassword)) {
+				sessionStorage.setItem('sess_username', postUsername);
+				sessionStorage.setItem('sess_password', postPassword);
 				window.location.href = "operation.html";
 			}
 		});
@@ -131,32 +150,45 @@ function getQueryString() {
 	promise.always(function () {
 		//do more on complete
 	});
-	
-}
- 
-function requiredAuth(){
- if(sessionStorage.getItem('sess_username')== null || sessionStorage.getItem('sess_username') == ''){
-	window.location.href = "index.html"; 
- }
+
 }
 
-function createBatch(e){
+function requiredAuth() {
+	if (sessionStorage.getItem('sess_username') == null || sessionStorage.getItem('sess_username') == '') {
+		window.location.href = "index.html";
+	}
+}
+
+function createBatch(e) {
 	e.preventDefault();
-	var frm = $('#frmCreateBatch');	
-	var postData = frm.serialize();
-	var table = $('tableName');
-	var date = $('date');
-	var time = $('timepicker');
-	var regex = $('regex');
-	
+	var d = new Date();
+	var time_stamp = d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear()+'_'+d.getHours()+'-'+d.getMinutes();
+	var frm = $('#frmCreateBatch');
+	//var postData = frm.serialize();
+	var table_id = $('#tableName').val();
+	var table_type = $('#tableName option:selected').attr('data-type');
+	var date = $('#date').val();
+	var time = $('#timepicker').val();
+	var regex = $('#regex').val();
+	var sess_username = sessionStorage.getItem('sess_username');
+	var sess_password = sessionStorage.getItem('sess_password');
+	var postData = {
+		username: sess_username,
+		password: sess_password,
+		batch: {
+			id: table_type + '_' + time_stamp,
+			table_type: table_type,
+			table_type_id: table_id
+		}
+	};
 	var xhr = new Ajax();
 	xhr.type = 'get';
-	xhr.url = 'mock_data/user.json';
+	xhr.url = 'mock_data/create_batch.json';
 	xhr.data = postData;
 	var promise = xhr.init();
 
 	promise.done(function (data) {
-		//console.log(data);
+		console.log(data);
 	});
 	promise.done(function (data) {
 		//do more

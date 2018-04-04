@@ -2,31 +2,25 @@
 {
 		"name": "Incident",
 		"id": "3ecf17e1-486c-40c5-a250-df0ba55be86d",
-		"type": "Incident",
+		"type": "incident",
 		"description": "Magdalene Sisters, The"
 	},
 	{
 		"name": "Problem",
 		"id": "ba70dceb-f1aa-49bb-aa3e-04ffb4cb3e0a",
-		"type": "Problem",
+		"type": "problem",
 		"description": "Season of the Witch (Hungry Wives) (Jack's Wife)"
 	},
 	{
 		"name": "Change Request",
 		"id": "e476781a-512f-4467-948b-97e042f7c4aa",
-		"type": "CR",
+		"type": "change_request",
 		"description": "Walker"
 	},
 	{
-		"name": "Tickets",
+		"name": "Trouble Tickets",
 		"id": "e476781a-512f-4467-948b-97e042f7c4qa",
-		"type": "Tickets",
-		"description": "Walker"
-	},
-	{
-		"name": "Travel Request",
-		"id": "e476381a-512f-4467-948b-97e042f7c4qa",
-		"type": "TR",
+		"type": "trouble_ticket",
 		"description": "Walker"
 	}
 ]
