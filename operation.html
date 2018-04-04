@@ -115,37 +115,42 @@
                                 <div class="card-header" data-background-color="orange">
                                     <h4>Create Batch</h4>
                                 </div>
-                                <div class="card-content table-responsive">
+                                
+								<form id="frmCreateBatch" name="frmCreateBatch" method="post">
+								<input type="hidden" name="action" value="create_batch">
+								<div class="card-content table-responsive">
                                     <div class="row">
                                         <div class="col-md-3">
                                            <div class="form-group label-floating">
                                                 <label class="control-label">Select Table</label>
-                                                <select id="tableName" class="form-control">
+                                                <select id="tableName" name="tableName" class="form-control">
                                                 </select>
                                             </div>                                             
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Date</label>
-                                                <input class="datepicker form-control" data-date-format="dd/mm/yyyy" data-date-start-date="0d">
+                                                <input id="date" name="date" class="datepicker form-control" data-date-format="dd/mm/yyyy" data-date-start-date="0d">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">Time</label>
-                                                <input id="timepicker" type="text" class="form-control">
+                                                <input id="timepicker" name="timepicker" type="text" class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group label-floating">
                                                 <label class="control-label">RegEx</label>
-                                                <input type="text" class="form-control">
+                                                <input type="text" class="form-control" name="regex" id="regex">
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary pull-left">Submit</button>
+                                    <button type="submit" id="btnCreateBatch" class="btn btn-primary pull-left">Submit</button>
                                     <div class="clearfix"></div>
                                 </div>
+								</form>
+								
                             </div>
                         </div>
                     </div>
