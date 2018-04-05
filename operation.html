@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width" />
     <!-- Bootstrap core CSS     -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+    <!--Data Table-->
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" media="screen">
     <!--  Material Dashboard CSS    -->
     <link href="assets/css/material-dashboard.css?v=1.2.0" rel="stylesheet" />
     <!--  CSS for Demo Purpose, don't include it in your project     -->
@@ -26,7 +28,7 @@
 <body data-page-id="operation">
     <div class="wrapper">
         <div class="sidebar" data-color="orange" data-image="assets/img/sidebar-1.jpg">
-            
+
             <div class="logo">
                 <a href="" class="simple-text">
                     <img src="assets/img/logo.png" style="width: 200px">
@@ -108,49 +110,49 @@
                 </div>
             </nav>
             <div class="content">
-                <div class="container-fluid">                    
+                <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card card-nav-tabs">
                                 <div class="card-header" data-background-color="orange">
                                     <h4>Create Batch</h4>
                                 </div>
-                                
-								<form id="frmCreateBatch" name="frmCreateBatch" method="post">
-								<input type="hidden" name="action" value="create_batch">
-								<div class="card-content table-responsive">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                           <div class="form-group label-floating">
-                                                <label class="control-label">Select Table</label>
-                                                <select id="tableName" name="tableName" class="form-control">
-                                                </select>
-                                            </div>                                             
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Date</label>
-                                                <input id="date" name="date" class="datepicker form-control" data-date-format="dd/mm/yyyy" data-date-start-date="0d">
+
+                                <form id="frmCreateBatch" name="frmCreateBatch" method="post">
+                                    <input type="hidden" name="action" value="create_batch">
+                                    <div class="card-content table-responsive">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Table Type</label>
+                                                    <select id="tableName" name="tableName" class="form-control">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Date</label>
+                                                    <input id="date" name="date" class="datepicker form-control" data-date-format="dd/mm/yyyy" data-date-start-date="0d">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Time</label>
+                                                    <input id="timepicker" name="timepicker" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">RegEx</label>
+                                                    <input type="text" class="form-control" name="regex" id="regex">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Time</label>
-                                                <input id="timepicker" name="timepicker" type="text" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">RegEx</label>
-                                                <input type="text" class="form-control" name="regex" id="regex">
-                                            </div>
-                                        </div>
+                                        <button type="submit" id="btnCreateBatch" class="btn btn-primary pull-left">Submit</button>
+                                        <div class="clearfix"></div>
                                     </div>
-                                    <button type="submit" id="btnCreateBatch" class="btn btn-primary pull-left">Submit</button>
-                                    <div class="clearfix"></div>
-                                </div>
-								</form>
-								
+                                </form>
+
                             </div>
                         </div>
                     </div>
@@ -161,29 +163,16 @@
                                     <h4>List Of Bacths</h4>
                                 </div>
                                 <div class="card-content table-responsive">
-                                    <table class="table table-hover">
+                                    <table id="tableListBatches" class="table table-hover">
                                         <thead class="text-primary">
-                                            <th>SR No.</th>
-                                            <th>Table Name</th>
-                                            <th>Date & Time</th>
+                                            <th>Sr #</th>
+                                            <th>Batch ID</th>
+                                            <th>Table Type</th>
+                                            <th>Date</th>
                                             <th>RegEx</th>
                                             <th>Status</th>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>incident</td>
-                                                <td>19/03/2018 05:45pm</td>
-                                                <td>xxxxxxx</td>
-                                                <td><span class="text-danger">not yet started</span></td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>incident</td>
-                                                <td>18/03/2018 03:45pm</td>
-                                                <td>xxxxxxx</td>
-                                                <td><span class="text-primary">in progress</span></td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -191,13 +180,16 @@
                         </div>
                     </div>
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
 </body>
 <!--   Core JS Files   -->
 <script src="assets/js/jquery-3.2.1.min.js" type="text/javascript"></script>
 <script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
+<!--Data Table-->
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 <script src="assets/js/material.min.js" type="text/javascript"></script>
 <!--  Dynamic Elements plugin -->
 <script src="assets/js/arrive.min.js"></script>
@@ -209,6 +201,9 @@
 <script src="assets/js/material-dashboard.js?v=1.2.0"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-timepicker/0.5.2/js/bootstrap-timepicker.min.js"></script>
+
+
+
 <script type="text/javascript">
     $('.datepicker').datepicker();
     $('#timepicker').timepicker();
@@ -217,4 +212,5 @@
 <script src="assets/js/src/ajax.js"></script>
 <!-- App Specific JS -->
 <script src="assets/js/src/app.js"></script>
+
 </html>

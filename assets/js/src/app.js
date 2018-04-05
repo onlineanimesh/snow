@@ -162,7 +162,7 @@ function requiredAuth() {
 function createBatch(e) {
 	e.preventDefault();
 	var d = new Date();
-	var time_stamp = d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear()+'_'+d.getHours()+'-'+d.getMinutes();
+	var time_stamp = d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear() + '_' + d.getHours() + '-' + d.getMinutes();
 	var frm = $('#frmCreateBatch');
 	//var postData = frm.serialize();
 	var table_id = $('#tableName').val();
@@ -189,6 +189,7 @@ function createBatch(e) {
 
 	promise.done(function (data) {
 		console.log(data);
+		//renderDataTableListBatches();
 	});
 	promise.done(function (data) {
 		//do more
@@ -207,3 +208,44 @@ function createBatch(e) {
 		//do more on complete
 	});
 }
+
+
+function renderDataTableListBatches() {
+	var table;
+	table = $('#tableListBatches').DataTable({
+		'ajax': {
+			'url': 'mock_data/create_batch.json',
+			'dataSrc': function (json) {
+				console.log(json);
+				var return_data = new Array();
+				$.each(json, function (index, val) {
+					//console.log(index);					
+					//$.each(val.commands, function (index, val) {
+						//console.log(cmdObj.deploymentPlan);
+						return_data.push({
+							'sr': index+1,
+							'batch_id': val.batch_id,
+							'table_type': val.table_type,
+							'batch_date': val.batch_date,
+							'regex': val.regex,
+							'status': val.status
+						});
+					//});
+				});
+				return return_data;
+				//return json;
+
+			},
+		},
+		'columns': [
+			{ 'data': "sr" },
+			{ 'data': "batch_id" },
+			{ 'data': "table_type" },
+			{ 'data': "batch_date" },
+			{ 'data': "regex" },
+			{ 'data': "status" }
+		]
+	});
+	return table;
+}
+renderDataTableListBatches();
