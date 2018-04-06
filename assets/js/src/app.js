@@ -90,9 +90,10 @@ function loadOperationPageData() {
 	var promise = xhr.init();
 
 	promise.done(function (data) {
-		$.each(data, function (index, value) {
+		$.each(data, function (key, value) {
 			// APPEND OR INSERT DATA TO SELECT ELEMENT.
-			$('#tableName').append('<option data-type="' + value.type + '" value="' + value.id + '">' + value.name + '</option>');
+			$('#tableName').append('<option title="' + value.description + '" data-type="' + value.table_type + '" value="' + value.table_type_id + '">' + value.table_name + '_' + value.table_type_id + '</option>');
+			//$('#tableName').append('<option data-type="' + key + '" value="' + key + '">' + key + '</option>');
 		});
 	});
 	promise.done(function (data) {
@@ -167,6 +168,14 @@ function createBatch(e) {
 	//var postData = frm.serialize();
 	var table_id = $('#tableName').val();
 	var table_type = $('#tableName option:selected').attr('data-type');
+
+	var selected = [];
+	$('#tableName :selected').each(function (key) {
+		console.log(key);
+		selected[$(this).val()] = $(this).text();
+	});
+	console.log(selected);
+
 	var date = $('#date').val();
 	var time = $('#timepicker').val();
 	var regex = $('#regex').val();
@@ -175,21 +184,23 @@ function createBatch(e) {
 	var postData = {
 		username: sess_username,
 		password: sess_password,
-		batch: {
+		batch: [{
 			id: table_type + '_' + time_stamp,
 			table_type: table_type,
 			table_type_id: table_id
-		}
+		}]
 	};
+	console.log(JSON.stringify(postData));
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = 'mock_data/create_batch.json';
 	xhr.data = postData;
 	var promise = xhr.init();
-
+	//frm.submit();
 	promise.done(function (data) {
-		console.log(data);
+		//console.log(data);
 		//renderDataTableListBatches();
+		//table.ajax.reload();
 	});
 	promise.done(function (data) {
 		//do more
@@ -211,6 +222,7 @@ function createBatch(e) {
 
 
 function renderDataTableListBatches() {
+	//console.log("renderDataTableListBatches() called");
 	var table;
 	table = $('#tableListBatches').DataTable({
 		'ajax': {
@@ -221,15 +233,15 @@ function renderDataTableListBatches() {
 				$.each(json, function (index, val) {
 					//console.log(index);					
 					//$.each(val.commands, function (index, val) {
-						//console.log(cmdObj.deploymentPlan);
-						return_data.push({
-							'sr': index+1,
-							'batch_id': val.batch_id,
-							'table_type': val.table_type,
-							'batch_date': val.batch_date,
-							'regex': val.regex,
-							'status': val.status
-						});
+					//console.log(cmdObj.deploymentPlan);
+					return_data.push({
+						'sr': index + 1,
+						'batch_id': val.batch_id,
+						'table_type': val.table_type,
+						'batch_date': val.batch_date,
+						'regex': val.regex,
+						'status': val.status
+					});
 					//});
 				});
 				return return_data;
