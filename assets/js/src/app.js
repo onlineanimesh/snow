@@ -166,15 +166,20 @@ function createBatch(e) {
 	var time_stamp = d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear() + '_' + d.getHours() + '-' + d.getMinutes();
 	var frm = $('#frmCreateBatch');
 	//var postData = frm.serialize();
-	var table_id = $('#tableName').val();
-	var table_type = $('#tableName option:selected').attr('data-type');
-
-	var selected = [];
-	$('#tableName :selected').each(function (key) {
-		console.log(key);
-		selected[$(this).val()] = $(this).text();
+	//var table_id = $('#tableName').val();
+	//var table_type = $('#tableName option:selected').attr('data-type');
+		
+	var batchTable = [];
+	$("#tableName option:selected").each(function (index, obj) {		
+		var id = $(this).val();
+		var table_type = $(this).attr('data-type');		
+		item = {}
+		item["batch_id"] = table_type + '_' + time_stamp;
+		item["table_type"] = table_type;
+		item["table_type_id"] = id;
+		batchTable.push(item);
 	});
-	console.log(selected);
+	//console.log(batchTable);
 
 	var date = $('#date').val();
 	var time = $('#timepicker').val();
@@ -184,11 +189,7 @@ function createBatch(e) {
 	var postData = {
 		username: sess_username,
 		password: sess_password,
-		batch: [{
-			id: table_type + '_' + time_stamp,
-			table_type: table_type,
-			table_type_id: table_id
-		}]
+		batch: batchTable
 	};
 	console.log(JSON.stringify(postData));
 	var xhr = new Ajax();
