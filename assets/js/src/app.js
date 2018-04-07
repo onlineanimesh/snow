@@ -269,7 +269,7 @@ function renderDataTableListBatches() {
 		'ajax': {
 			'url': API.createBatch,
 			'dataSrc': function (jsonData) {
-				console.log(jsonData);
+				//console.log(jsonData);
 				var return_data = new Array();
 				$.each(jsonData, function (index, val) {
 					//console.log(index);					
