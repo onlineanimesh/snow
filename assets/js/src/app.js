@@ -92,7 +92,8 @@ function DOMReady() {
 
 	if (pageId == 'scan_result') {
 		requiredAuth();
-		
+		renderDataTableResult();
+
 	}
 } // end of $(document).ready();
 
@@ -187,11 +188,11 @@ function createBatch(e) {
 	//var postData = frm.serialize();
 	//var table_id = $('#tableName').val();
 	//var table_type = $('#tableName option:selected').attr('data-type');
-		
+
 	var batchTable = [];
-	$("#tableName option:selected").each(function (index, obj) {		
+	$("#tableName option:selected").each(function (index, obj) {
 		var id = $(this).val();
-		var table_type = $(this).attr('data-type');		
+		var table_type = $(this).attr('data-type');
 		item = {}
 		item["batch_id"] = table_type + '_' + time_stamp;
 		item["table_type"] = table_type;
@@ -276,6 +277,47 @@ function renderDataTableListBatches() {
 			{ 'data': "batch_date" },
 			{ 'data': "regex" },
 			{ 'data': "status" }
+		]
+	});
+	return table;
+}
+
+
+function renderDataTableResult() {
+	var table;
+	table = $('#tableResult').DataTable({
+		'ajax': {
+			'url': API.gerResult,
+			'dataSrc': function (jsonData) {
+				console.log(jsonData);
+				var return_data = new Array();
+				$.each(jsonData, function (batchIndex, batchObj) {
+					$.each(batchObj.attachment, function (attachmentIndex, attachmentObj) {
+						//console.log(cmdObj.deploymentPlan);
+						return_data.push({
+							'1': batchObj.batch_id,
+							'2': batchObj.regex,
+							'3': attachmentObj.document_name,
+							'4': attachmentObj.document_type,
+							'5': attachmentObj.document_size,
+							'6': attachmentObj.status,
+							'7': '<span class="'+attachmentObj.status_txt_css_class+'">'+attachmentObj.status_message+'</span>'
+						});
+					});
+				});
+				return return_data;
+				//return jsonData;
+
+			},
+		},
+		'columns': [
+			{ 'data': "1" },
+			{ 'data': "2" },
+			{ 'data': "3" },
+			{ 'data': "4" },
+			{ 'data': "5" },
+			{ 'data': "6" },
+			{ 'data': "7" }
 		]
 	});
 	return table;
