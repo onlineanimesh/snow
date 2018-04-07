@@ -1,7 +1,27 @@
+/**
+ * --------------------------------------------------------------------------------------
+ * This is the main application file.
+ * This file is responsible for controlling application behaviour
+ * All frontend user activities are handled by the code block written here
+ * --------------------------------------------------------------------------------------
+ */
+
+// Make sure jQuery has been loaded
+if (typeof jQuery === 'undefined') {
+	throw new Error('QTS Scanner App requires jQuery');
+}
+
+/**
+ * App Specific Variables, Constants
+ */
+var environment = 0; // ["dev","uat","prod"]
+var debug = true; // true|false
 var baseURL = window.location.origin;
 var currentURL = document.location.href;
 
-//Web Service/REST API Config
+/**
+ * Web Service/REST API Config
+ */
 var APIBaseURL = baseURL + '/mock_data/'; // in production it might be https://www.something.com/api/
 var API = {};
 API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
@@ -63,7 +83,7 @@ function DOMReady() {
 		requiredAuth();
 		alert("Warning! Unable to process your request\n.data-page-id attribute is not found in body tag.");
 	}
-	console.log("DOM Init #### data-page-id = " + pageId);
+	console.log("###### DOM is Ready ###### data-page-id = " + pageId);
 
 	if (pageId == 'login') {
 		//auth();
@@ -211,7 +231,7 @@ function createBatch(e) {
 		password: sess_password,
 		batch: batchTable
 	};
-	console.log(JSON.stringify(postData));
+	//console.log(JSON.stringify(postData));
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = API.createBatch;
@@ -248,10 +268,10 @@ function renderDataTableListBatches() {
 	table = $('#tableListBatches').DataTable({
 		'ajax': {
 			'url': API.createBatch,
-			'dataSrc': function (json) {
-				console.log(json);
+			'dataSrc': function (jsonData) {
+				console.log(jsonData);
 				var return_data = new Array();
-				$.each(json, function (index, val) {
+				$.each(jsonData, function (index, val) {
 					//console.log(index);					
 					//$.each(val.commands, function (index, val) {
 					//console.log(cmdObj.deploymentPlan);
@@ -266,7 +286,7 @@ function renderDataTableListBatches() {
 					//});
 				});
 				return return_data;
-				//return json;
+				//return jsonData;
 
 			},
 		},
@@ -289,7 +309,7 @@ function renderDataTableResult() {
 		'ajax': {
 			'url': API.gerResult,
 			'dataSrc': function (jsonData) {
-				console.log(jsonData);
+				//console.log(jsonData);
 				var return_data = new Array();
 				$.each(jsonData, function (batchIndex, batchObj) {
 					$.each(batchObj.attachment, function (attachmentIndex, attachmentObj) {
@@ -301,7 +321,7 @@ function renderDataTableResult() {
 							'4': attachmentObj.document_type,
 							'5': attachmentObj.document_size,
 							'6': attachmentObj.status,
-							'7': '<span class="'+attachmentObj.status_txt_css_class+'">'+attachmentObj.status_message+'</span>'
+							'7': '<span class="' + attachmentObj.status_txt_css_class + '">' + attachmentObj.status_message + '</span>'
 						});
 					});
 				});
