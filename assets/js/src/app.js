@@ -1,5 +1,14 @@
-baseURL = window.location.origin;
-currentURL = document.location.href;
+var baseURL = window.location.origin;
+var currentURL = document.location.href;
+
+//Web Service/REST API Config
+var APIBaseURL = baseURL + '/mock_data/'; // in production it might be https://www.something.com/api/
+var API = {};
+API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
+API.createBatch = APIBaseURL + 'create_batch.json';
+API.getAll = APIBaseURL + 'all.json';
+API.gerResult = APIBaseURL + 'result.json';
+
 
 /**
  * Onload set scroll bar to bottom of the scrollable container 
@@ -46,9 +55,9 @@ function formatAMPM(date) {
  * DOM Interaction (Ready/Load, Click, Hover, Change)
  * ------------------------------------------------------------------------------
  */
-$(initPage); // Document Ready Handler
+$(DOMReady); // Document Ready Handler
 
-function initPage() {
+function DOMReady() {
 	var pageId = $('body').attr('data-page-id') ? $('body').attr('data-page-id') : '';
 	if (pageId == '') {
 		requiredAuth();
@@ -77,15 +86,22 @@ function initPage() {
 
 		// On Clicking Create Batch
 		$('#btnCreateBatch').on('click', createBatch);
+
+		renderDataTableListBatches();
 	}
-}
+
+	if (pageId == 'scan_result') {
+		requiredAuth();
+		
+	}
+} // end of $(document).ready();
 
 
 
 function loadOperationPageData() {
 	var xhr = new Ajax();
 	xhr.type = 'get';
-	xhr.url = 'mock_data/all.json';
+	xhr.url = API.getAll;
 	xhr.data = { username: sessionStorage.getItem('sess_username'), password: sessionStorage.getItem('sess_password') };
 	var promise = xhr.init();
 
@@ -114,13 +130,14 @@ function loadOperationPageData() {
 	});
 }
 
+
 function doLogin(e) {
 	e.preventDefault();
 	var postUsername = $("#username").val();
 	var postPassword = $("#password").val();
 	var xhr = new Ajax();
 	xhr.type = 'get';
-	xhr.url = 'mock_data/user.json';
+	xhr.url = API.userAuth;
 	xhr.data = { username: postUsername, password: postPassword };
 	var promise = xhr.init();
 
@@ -154,11 +171,13 @@ function doLogin(e) {
 
 }
 
+
 function requiredAuth() {
 	if (sessionStorage.getItem('sess_username') == null || sessionStorage.getItem('sess_username') == '') {
 		window.location.href = "index.html";
 	}
 }
+
 
 function createBatch(e) {
 	e.preventDefault();
@@ -193,7 +212,7 @@ function createBatch(e) {
 	console.log(JSON.stringify(postData));
 	var xhr = new Ajax();
 	xhr.type = 'get';
-	xhr.url = 'mock_data/create_batch.json';
+	xhr.url = API.createBatch;
 	xhr.data = postData;
 	var promise = xhr.init();
 	//frm.submit();
@@ -226,7 +245,7 @@ function renderDataTableListBatches() {
 	var table;
 	table = $('#tableListBatches').DataTable({
 		'ajax': {
-			'url': 'mock_data/create_batch.json',
+			'url': API.createBatch,
 			'dataSrc': function (json) {
 				console.log(json);
 				var return_data = new Array();
@@ -260,4 +279,3 @@ function renderDataTableListBatches() {
 	});
 	return table;
 }
-renderDataTableListBatches();
