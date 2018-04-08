@@ -11,11 +11,52 @@ if (typeof jQuery === 'undefined') {
 	throw new Error('QTS Scanner App requires jQuery');
 }
 
+
 /**
- * App Specific Variables, Constants
+ * Overridden console.log for production
+ * @type Function|common_L4.commonAnonym$0
  */
-var environment = 0; // ["dev","uat","prod"]
-var debug = true; // true|false
+window.console = (function (origConsole) {
+	if (!window.console)
+		console = {};
+	var isDebug = true; // set true to display console in browser console
+	var logArray = {
+		logs: [],
+		errors: [],
+		warns: [],
+		infos: []
+	};
+	return {
+		log: function () {
+			logArray.logs.push(arguments)
+			isDebug && origConsole.log && origConsole.log.apply(origConsole, arguments);
+		},
+		warn: function () {
+			logArray.warns.push(arguments)
+			isDebug && origConsole.warn && origConsole.warn.apply(origConsole, arguments);
+		},
+		error: function () {
+			logArray.errors.push(arguments)
+			isDebug && origConsole.error && origConsole.error.apply(origConsole, arguments);
+		},
+		info: function (v) {
+			logArray.infos.push(arguments)
+			isDebug && origConsole.info && origConsole.info.apply(origConsole, arguments);
+		},
+		debug: function (bool) {
+			isDebug = bool;
+		},
+		logArray: function () {
+			return logArray;
+		}
+	};
+
+}(window.console));
+
+
+/**
+* App Specific Variables, Constants
+*/
 var baseURL = window.location.origin;
 var currentURL = document.location.href;
 
@@ -219,7 +260,6 @@ function createBatch(e) {
 		item["table_type_id"] = id;
 		batchTable.push(item);
 	});
-	//console.log(batchTable);
 
 	var date = $('#date').val();
 	var time = $('#timepicker').val();
@@ -231,7 +271,7 @@ function createBatch(e) {
 		password: sess_password,
 		batch: batchTable
 	};
-	//console.log(JSON.stringify(postData));
+	console.log(JSON.stringify(postData));
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = API.createBatch;
@@ -239,7 +279,7 @@ function createBatch(e) {
 	var promise = xhr.init();
 	//frm.submit();
 	promise.done(function (data) {
-		//console.log(data);
+		console.log(data);
 		//renderDataTableListBatches();
 		//table.ajax.reload();
 	});
@@ -272,9 +312,7 @@ function renderDataTableListBatches() {
 				//console.log(jsonData);
 				var return_data = new Array();
 				$.each(jsonData, function (index, val) {
-					//console.log(index);					
-					//$.each(val.commands, function (index, val) {
-					//console.log(cmdObj.deploymentPlan);
+					//console.log(index);
 					return_data.push({
 						'sr': index + 1,
 						'batch_id': val.batch_id,
@@ -283,7 +321,6 @@ function renderDataTableListBatches() {
 						'regex': val.regex,
 						'status': val.status
 					});
-					//});
 				});
 				return return_data;
 				//return jsonData;
@@ -309,11 +346,10 @@ function renderDataTableResult() {
 		'ajax': {
 			'url': API.gerResult,
 			'dataSrc': function (jsonData) {
-				//console.log(jsonData);
+				console.log(jsonData);
 				var return_data = new Array();
 				$.each(jsonData, function (batchIndex, batchObj) {
 					$.each(batchObj.attachment, function (attachmentIndex, attachmentObj) {
-						//console.log(cmdObj.deploymentPlan);
 						return_data.push({
 							'1': batchObj.batch_id,
 							'2': batchObj.regex,
