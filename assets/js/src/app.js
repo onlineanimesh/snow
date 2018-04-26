@@ -58,12 +58,22 @@ window.console = (function (origConsole) {
 * App Specific Variables, Constants
 */
 var baseURL = window.location.origin;
+var pathName = window.location.pathname;
+var html_page = pathName.split('/').pop();
 var currentURL = document.location.href;
+var splitted_url = currentURL.split(html_page);
+var basePath = baseURL;
+if(html_page==""){
+	basePath = baseURL+pathName;
+}else{
+	basePath = splitted_url[0];
+}
+
 
 /**
  * Web Service/REST API Config
  */
-var APIBaseURL = baseURL + '/mock_data/'; // in production it might be https://www.something.com/api/
+var APIBaseURL = basePath+'mock_data/'; // in production it might be https://www.something.com/api/
 var API = {};
 API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
 API.saveLoginData = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
