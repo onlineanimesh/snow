@@ -1,16 +1,25 @@
-[{
+[
+{
   "username": "animesh",
-  "password": "af56adc"
-}, {
+  "password": "animesh",
+  "host":"dev12997.service-now.com",
+  "is_configured":"true",
+  "message":"<strong>Great!</strong> Your login credential is configured.",
+  "btn_text":"Proceed"
+}, 
+{
   "username": "admin",
-  "password": "admin"
-}, {
-  "username": "bshane2",
-  "password": "62c6fF"
-}, {
-  "username": "ydadds3",
-  "password": "IlxG3Y8Y"
-}, {
-  "username": "nwalbrook4",
-  "password": "juLABe"
+  "password": "admin",
+  "host":"",
+  "is_configured":"false",
+  "message":"<strong>Warning!</strong> Your login credential is not configured.",
+  "btn_text":"Configure & Proceed"
+}, 
+{
+  "username": "saikat",
+  "password": "saikat",
+  "host":"dev12997.service-now.com",
+  "is_configured":"true",
+  "message":"<strong>Great!</strong> Your login credential is configured.",
+  "btn_text":"Proceed"
 }]

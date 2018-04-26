@@ -121,3 +121,6 @@
 .login-page .copyright, a{
     color: #eee;
 }
+.login-config-content{
+	display: none;
+}

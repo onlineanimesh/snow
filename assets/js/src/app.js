@@ -66,6 +66,7 @@ var currentURL = document.location.href;
 var APIBaseURL = baseURL + '/mock_data/'; // in production it might be https://www.something.com/api/
 var API = {};
 API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
+API.saveLoginData = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
 API.createBatch = APIBaseURL + 'create_batch.json';
 API.getAll = APIBaseURL + 'all.json';
 API.gerResult = APIBaseURL + 'result.json';
@@ -135,6 +136,9 @@ function DOMReady() {
 		*/
 		var elBtnLogin = '#btnLogin';
 		var elFrmLogin = '#frmLogin';
+		var elLoginContent = '.login-content';
+		var elLoginConfigContent = '.login-config-content';
+		$(elLoginConfigContent).hide();
 
 		$(elBtnLogin).on('click', doLogin);
 	}
@@ -197,6 +201,8 @@ function doLogin(e) {
 	e.preventDefault();
 	var postUsername = $("#username").val();
 	var postPassword = $("#password").val();
+	var elLoginContent = '.login-content';
+	var elLoginConfigContent = '.login-config-content';
 	var xhr = new Ajax();
 	xhr.type = 'get';
 	xhr.url = API.userAuth;
@@ -209,16 +215,57 @@ function doLogin(e) {
 			//console.log(user.username);
 			if ((user.username == postUsername) && (user.password == postPassword)) {
 				sessionStorage.setItem('sess_username', postUsername);
-				sessionStorage.setItem('sess_password', postPassword);
-				window.location.href = "operation.html";
+				sessionStorage.setItem('sess_password', postPassword);				
 			}
 		});
 	});
 	promise.done(function (data) {
 		//do more
+		//console.log(data);
+		$.each(data, function (i, user) {
+			//console.log(user.username);
+			if ((user.username == postUsername) && (user.password == postPassword)) {				
+				if(user.is_configured == "true"){
+					$("#login_cred_alert_msg_container").addClass('alert-success');
+				}else{
+					$("#login_cred_alert_msg_container").removeClass('alert-success').addClass('alert-warning');
+				}
+				$("#login_cred_msg").html(user.message);
+				$("#btnConfigLogin").html(user.btn_text);
+			}
+		});
+		
+		$(elLoginContent).hide();
+		$(elLoginConfigContent).show();
+		
+		$("#btnConfigLogin").on("click", function(e){
+			e.preventDefault();
+			var xhr = new Ajax();
+			xhr.type = 'post';
+			xhr.url = API.saveLoginData;
+			xhr.data = { username: postUsername, password: postPassword, hostname: window.location.host };
+			var promise = xhr.init();
+			promise.done(function (data) {
+				//do another task
+				window.location.href = "operation.html";
+			});
+			promise.fail(function () {
+				//show failure message
+			});
+			promise.always(function () {
+				//always will be executed whether success or failue
+				//do some thing
+			});
+			promise.always(function () {
+				//do more on complete
+			});
+			
+		});
+				
 	});
 	promise.done(function (data) {
 		//do another task
+		//window.location.href = "operation.html";
 	});
 	promise.fail(function () {
 		//show failure message
