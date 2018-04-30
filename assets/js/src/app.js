@@ -63,9 +63,9 @@ var html_page = pathName.split('/').pop();
 var currentURL = document.location.href;
 var splitted_url = currentURL.split(html_page);
 var basePath = baseURL;
-if(html_page==""){
-	basePath = baseURL+pathName;
-}else{
+if (html_page == "") {
+	basePath = baseURL + pathName;
+} else {
 	basePath = splitted_url[0];
 }
 
@@ -73,13 +73,14 @@ if(html_page==""){
 /**
  * Web Service/REST API Config
  */
-var APIBaseURL = basePath+'mock_data/'; // in production it might be https://www.something.com/api/
+var APIBaseURL = basePath + 'mock_data/'; // in production it might be https://www.something.com/api/
 var API = {};
 API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
 API.saveLoginData = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
 API.createBatch = APIBaseURL + 'create_batch.json';
 API.getAll = APIBaseURL + 'all.json';
 API.gerResult = APIBaseURL + 'result.json';
+API.saveConfiguration = APIBaseURL + 'saveconfig.json';
 
 
 /**
@@ -170,6 +171,12 @@ function DOMReady() {
 		renderDataTableResult();
 
 	}
+
+	if (pageId == 'configuration') {
+		requiredAuth();
+		// On click save config
+		$('#btnSaveConfiguration').on('click', saveConfiguration);
+	}
 } // end of $(document).ready();
 
 
@@ -225,30 +232,35 @@ function doLogin(e) {
 			//console.log(user.username);
 			if ((user.username == postUsername) && (user.password == postPassword)) {
 				sessionStorage.setItem('sess_username', postUsername);
-				sessionStorage.setItem('sess_password', postPassword);				
+				sessionStorage.setItem('sess_password', postPassword);
+				if (user.is_configured == "false") {
+					
+				} else {
+					
+				}
 			}
 		});
 	});
-	promise.done(function (data) {
+	/*promise.done(function (data) {
 		//do more
 		//console.log(data);
 		$.each(data, function (i, user) {
 			//console.log(user.username);
-			if ((user.username == postUsername) && (user.password == postPassword)) {				
-				if(user.is_configured == "true"){
+			if ((user.username == postUsername) && (user.password == postPassword)) {
+				if (user.is_configured == "true") {
 					$("#login_cred_alert_msg_container").addClass('alert-success');
-				}else{
+				} else {
 					$("#login_cred_alert_msg_container").removeClass('alert-success').addClass('alert-warning');
 				}
 				$("#login_cred_msg").html(user.message);
 				$("#btnConfigLogin").html(user.btn_text);
 			}
 		});
-		
+
 		$(elLoginContent).hide();
 		$(elLoginConfigContent).show();
-		
-		$("#btnConfigLogin").on("click", function(e){
+
+		$("#btnConfigLogin").on("click", function (e) {
 			e.preventDefault();
 			var xhr = new Ajax();
 			xhr.type = 'post';
@@ -269,13 +281,13 @@ function doLogin(e) {
 			promise.always(function () {
 				//do more on complete
 			});
-			
+
 		});
-				
-	});
+
+	});*/
 	promise.done(function (data) {
-		//do another task
-		//window.location.href = "operation.html";
+		//redirect to desire page
+		window.location.href = "configuration.html";
 	});
 	promise.fail(function () {
 		//show failure message
@@ -434,4 +446,43 @@ function renderDataTableResult() {
 		]
 	});
 	return table;
+}
+
+
+function saveConfiguration(e) {
+	e.preventDefault();	
+	var frm = $('#frmConfiguration');
+	//var postData = frm.serialize();
+	var postData = {};
+	postData.service_now_url = $('#service_now_url').val();
+	postData.service_now_username = $('#service_now_username').val();
+	postData.service_now_password = $('#service_now_password').val();
+	postData.scanner_password = $('#scanner_password').val();
+
+	var xhr = new Ajax();
+	xhr.type = 'post';
+	xhr.url = API.saveConfiguration;
+	xhr.data = postData;
+	var promise = xhr.init();
+
+	promise.done(function (data) {
+		console.log(data);
+	});
+	promise.done(function (data) {
+		//redirect to operation
+		window.location.href = "operation.html";
+	});
+	promise.done(function (data) {
+		//do another task
+	});
+	promise.fail(function () {
+		//show failure message
+	});
+	promise.always(function () {
+		//always will be executed whether success or failue
+		//do some thing
+	});
+	promise.always(function () {
+		//do more on complete
+	});
 }
