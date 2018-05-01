@@ -138,7 +138,7 @@ function DOMReady() {
 	}
 	console.log("###### DOM is Ready ###### data-page-id = " + pageId);
 
-	if (pageId == 'login') {		
+	if (pageId == 'login') {
 		var elBtnLogin = '#btnLogin';
 		var elFrmLogin = '#frmLogin';
 		var elLoginContent = '.login-content';
@@ -155,6 +155,45 @@ function DOMReady() {
 		// On Clicking Create Batch
 		$('#btnCreateBatch').on('click', createBatch);
 		renderDataTableListBatches();
+
+		//Add More Exp
+		$(document).on("click", ".addMoreExpression", function (e) {
+			console.log(e);
+			e.preventDefault();
+			var parentRowContainer = $(this).parent().parent();
+			var countExpContainer = $(".dynamicExpressionContainer").length;
+			var html = '';
+			html += '<div class="row dynamicExpressionContainer">';
+			html += '<div class="col-md-5">';
+			html += '<div class="form-group label-floating">';
+			html += '<label class="control-label">Expression Type</label>';
+			html += '<select name="expressionType" class="form-control">';
+			html += '<option value=""></option>';
+			html += '<option value="regular_expression">Regular Expression</option>';
+			html += '<option value="generic_expression">Generic Expression</option>';
+			html += '</select>';
+			html += '</div>';
+			html += '</div>';
+			html += '<div class="col-md-5">';
+			html += '<div class="form-group label-floating">';
+			html += '<label class="control-label">Please enter expression</label>';
+			html += '<input data-type="" type="text" class="form-control" name="expression" maxlength="255">';
+			html += '</div>';
+			html += '</div>';
+			html += '<div class="col-md-2">';
+			html += '<a href="#" class="addMoreExpression btn btn-success btn-xs" title="Add More Expression"><i class="material-icons">add</i></a>';
+			html += '<a href="#" class="removeExpression btn btn-danger btn-xs" title="Remove this Expression"><i class="material-icons">remove</i></a>';
+			html += '</div>';
+			html += '</div>';
+
+			parentRowContainer.after(html);
+		});
+
+		$(document).on("click", ".removeExpression", function (e) {
+			console.log(e);
+			e.preventDefault();
+			$(this).parent().parent().remove();
+		});
 	}
 
 	if (pageId == 'scan_result') {
@@ -166,7 +205,7 @@ function DOMReady() {
 		requiredAuth();
 		// On click save config
 		$('#btnSaveConfiguration').on('click', saveConfiguration);
-		$('#btnSkipSaveConfiguration').on('click', function(e){
+		$('#btnSkipSaveConfiguration').on('click', function (e) {
 			window.location.href = "operation.html";
 		});
 	}
@@ -227,9 +266,9 @@ function doLogin(e) {
 				sessionStorage.setItem('sess_username', postUsername);
 				sessionStorage.setItem('sess_password', postPassword);
 				if (user.is_configured == "false") {
-					
+
 				} else {
-					
+
 				}
 			}
 		});
@@ -443,7 +482,7 @@ function renderDataTableResult() {
 
 
 function saveConfiguration(e) {
-	e.preventDefault();	
+	e.preventDefault();
 	var frm = $('#frmConfiguration');
 	//var postData = frm.serialize();
 	var postData = {};
