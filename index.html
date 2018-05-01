@@ -22,7 +22,7 @@
 
 <body data-page-id="login">
     <div class="wrapper wrapper-full-page">
-        <div class="full-page login-page" filter-color="purple" data-image="assets/img/login-bg.jpg">
+        <div class="full-page login-page" filter-color="orange" data-image="assets/img/login-bg.jpg">
             <div class="content">
                 <div class="container">
                     <div class="row">
@@ -30,13 +30,11 @@
                             <form name="frmLogin" id="frmLogin" method="post" action="">
 								<input type="hidden" name="action" value="login">
                                 <div class="card card-login">
-                                    <div class="card-header text-center" data-background-color="purple">
+                                    <div class="card-header text-center" data-background-color="orange">
                                         <img src="assets/img/logo.png" style="width: 200px">
                                     </div>
-                                    <p class="category text-center">
-                                        
-                                    </p>
-                                    <div class="card-content login-content">
+                                    <p class="category text-center" id="loginMessage"></p>
+                                    <div class="card-content">
                                         <div class="input-group">
                                             <span class="input-group-addon">
                                                 <i class="material-icons">person</i>
@@ -56,22 +54,9 @@
                                             <span class="material-input"></span></div>
                                         </div>
                                     </div>
-                                    <div class="footer text-center login-content">
+                                    <div class="footer text-center">
                                         <button type="submit" id="btnLogin" class="btn btn-primary btn-round">Let's go</button>
                                     </div>
-									
-									
-									<div class="card-content login-config-content">
-										<div id="login_cred_alert_msg_container" class="alert" role="alert">
-											<span id="login_cred_msg"></span>
-										</div>
-                                        <br>
-										<br>
-                                    </div>
-                                    <div class="footer text-center login-config-content">
-                                        <button type="submit" id="btnConfigLogin" class="btn btn-primary btn-round btn-lg">Proceed</button>
-                                    </div>
-									
                                 </div>
                             </form>
                         </div>

@@ -62,7 +62,7 @@ var pathName = window.location.pathname;
 var html_page = pathName.split('/').pop();
 var currentURL = document.location.href;
 var splitted_url = currentURL.split(html_page);
-var basePath = baseURL;
+var basePath = baseURL; //in production it might be https://www.something.com
 if (html_page == "") {
 	basePath = baseURL + pathName;
 } else {
@@ -73,14 +73,13 @@ if (html_page == "") {
 /**
  * Web Service/REST API Config
  */
-var APIBaseURL = basePath + 'mock_data/'; // in production it might be https://www.something.com/api/
+var APIBaseURL = basePath + 'mock_data/'; //in production it might be https://www.something.com/api/
 var API = {};
-API.userAuth = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
-API.saveLoginData = APIBaseURL + 'user.json'; // in production it might be https://www.something.com/api/uauth.action
-API.createBatch = APIBaseURL + 'create_batch.json';
-API.getAll = APIBaseURL + 'all.json';
-API.gerResult = APIBaseURL + 'result.json';
-API.saveConfiguration = APIBaseURL + 'saveconfig.json';
+API.userAuth = APIBaseURL + 'res_user_auth.json'; // in production it might be https://www.something.com/api/uauth.action
+API.createBatch = APIBaseURL + 'res_create_batch.json';
+API.getTableType = APIBaseURL + 'res_table_type.json';
+API.getResult = APIBaseURL + 'res_result.json';
+API.saveConfiguration = APIBaseURL + 'res_saveconfig.json';
 
 
 /**
@@ -185,7 +184,7 @@ function DOMReady() {
 	if (pageId == 'operation') {
 		requiredAuth();
 		// Load Data
-		loadOperationPageData();
+		renderTableType();
 		// On Clicking Create Batch
 		$('#btnCreateBatch').on('click', createBatch);
 		renderDataTableListBatches();
@@ -254,10 +253,10 @@ function DOMReady() {
 
 
 
-function loadOperationPageData() {
+function renderTableType() {
 	var xhr = new Ajax();
 	xhr.type = 'get';
-	xhr.url = API.getAll;
+	xhr.url = API.getTableType;
 	xhr.data = { username: sessionStorage.getItem('sess_username'), password: sessionStorage.getItem('sess_password') };
 	var promise = xhr.init();
 
@@ -294,73 +293,32 @@ function doLogin(e) {
 	var elLoginContent = '.login-content';
 	var elLoginConfigContent = '.login-config-content';
 	var xhr = new Ajax();
-	xhr.type = 'get';
+	xhr.type = 'POST';
 	xhr.url = API.userAuth;
 	xhr.data = { username: postUsername, password: postPassword };
 	var promise = xhr.init();
 
 	promise.done(function (data) {
-		//console.log(data);
-		$.each(data, function (i, user) {
-			//console.log(user.username);
-			if ((user.username == postUsername) && (user.password == postPassword)) {
-				sessionStorage.setItem('sess_username', postUsername);
-				sessionStorage.setItem('sess_password', postPassword);
-				if (user.is_configured == "false") {
+		// if login success
+		if (data.is_user_authenticated == true) {
+			sessionStorage.setItem('sess_username', data.username);
+			sessionStorage.setItem('sess_password', data.password);
+			$("#loginMessage").html('<span class="alert alert-success">' + data.message + '</span>');
 
-				} else {
+			// redirect to page after login successful. using set time out for 2 sec delay
+			// if you want to redirect without delay, then use the below
+			// window.location.href = "configuration.html";
+			setTimeout(function () { window.location.href = "configuration.html"; }, 1000);
+			
 
-				}
-			}
-		});
+		} else {
+			// display login failed message
+			$("#loginMessage").html('<span class="alert alert-danger">Login failed. </span>');
+		}
 	});
-	/*promise.done(function (data) {
-		//do more
-		//console.log(data);
-		$.each(data, function (i, user) {
-			//console.log(user.username);
-			if ((user.username == postUsername) && (user.password == postPassword)) {
-				if (user.is_configured == "true") {
-					$("#login_cred_alert_msg_container").addClass('alert-success');
-				} else {
-					$("#login_cred_alert_msg_container").removeClass('alert-success').addClass('alert-warning');
-				}
-				$("#login_cred_msg").html(user.message);
-				$("#btnConfigLogin").html(user.btn_text);
-			}
-		});
 
-		$(elLoginContent).hide();
-		$(elLoginConfigContent).show();
-
-		$("#btnConfigLogin").on("click", function (e) {
-			e.preventDefault();
-			var xhr = new Ajax();
-			xhr.type = 'post';
-			xhr.url = API.saveLoginData;
-			xhr.data = { username: postUsername, password: postPassword, hostname: window.location.host };
-			var promise = xhr.init();
-			promise.done(function (data) {
-				//do another task
-				window.location.href = "operation.html";
-			});
-			promise.fail(function () {
-				//show failure message
-			});
-			promise.always(function () {
-				//always will be executed whether success or failue
-				//do some thing
-			});
-			promise.always(function () {
-				//do more on complete
-			});
-
-		});
-
-	});*/
 	promise.done(function (data) {
-		//redirect to desire page
-		window.location.href = "configuration.html";
+		//do more
 	});
 	promise.fail(function () {
 		//show failure message
@@ -399,7 +357,7 @@ function createBatch(e) {
 		var exp_type = $(this).attr('data-expression-type');
 		item = {}
 		//item["expression_type"] = exp_type;
-		item["exp_" + (index+1)] = exp_val;
+		item["exp_" + (index + 1)] = exp_val;
 		batchRegExp.push(item);
 	});
 	//console.log("Reg", batchRegExp);
@@ -410,7 +368,7 @@ function createBatch(e) {
 		var exp_type = $(this).attr('data-expression-type');
 		item = {}
 		//item["expression_type"] = exp_type;
-		item["exp_" + (index+1)] = exp_val;
+		item["exp_" + (index + 1)] = exp_val;
 		batchGenExp.push(item);
 	});
 	//console.log("Gen", batchGenExp);
@@ -512,7 +470,7 @@ function renderDataTableResult() {
 	var table;
 	table = $('#tableResult').DataTable({
 		'ajax': {
-			'url': API.gerResult,
+			'url': API.getResult,
 			'dataSrc': function (jsonData) {
 				console.log(jsonData);
 				var return_data = new Array();

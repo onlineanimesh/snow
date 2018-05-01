@@ -1200,7 +1200,7 @@ fieldset[disabled] .navbar .navbar-nav>li>a.btn.btn-default.active {
 .open>.navbar .navbar-nav>li>a.btn.btn-primary.dropdown-toggle,
 .open>.navbar .navbar-nav>li>a.btn.btn-primary.dropdown-toggle:focus,
 .open>.navbar .navbar-nav>li>a.btn.btn-primary.dropdown-toggle:hover {
-    background-color: #9c27b0;
+    background-color: #fa7d00;
     color: #FFFFFF;
 }
 
@@ -5304,7 +5304,7 @@ footer .btn {
 }
 
 .card [data-background-color="orange"] {
-    background: linear-gradient(60deg, #ffa726, #fb8c00);
+    background: linear-gradient(60deg, #fa7d00, #ffa726);
     box-shadow: 0 12px 20px -10px rgba(255, 152, 0, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(255, 152, 0, 0.2);
 }
 
