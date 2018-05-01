@@ -122,6 +122,38 @@ function formatAMPM(date) {
 	return strTime;
 }
 
+/**
+ * Scroll to Top of webpage
+ */
+
+function scrollToTop(minHeight, scrollSpeed) {
+	$(window).scroll(function () {
+		if ($(this).scrollTop() > minHeight) {
+			$('.scrollup').fadeIn();
+		} else {
+			$('.scrollup').fadeOut();
+		}
+	});
+	$('.scrollup').click(function () {
+		$("html, body").animate({
+			scrollTop: 0
+		}, scrollSpeed);
+		return false;
+	});
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * ------------------------------------------------------------------------------
@@ -137,6 +169,8 @@ function DOMReady() {
 		alert("Warning! Unable to process your request\n.data-page-id attribute is not found in body tag.");
 	}
 	console.log("###### DOM is Ready ###### data-page-id = " + pageId);
+
+	scrollToTop(100, 100);
 
 	if (pageId == 'login') {
 		var elBtnLogin = '#btnLogin';
@@ -156,6 +190,13 @@ function DOMReady() {
 		$('#btnCreateBatch').on('click', createBatch);
 		renderDataTableListBatches();
 
+		$(document).on("change", "select[name='expressionType']", function (e) {
+			var expressionType = $(this).val();
+			//console.log(expressionType);			
+			var parentRowContainer = $(this).parent().parent().parent();
+			parentRowContainer.find('input[data-expression-type]').attr('data-expression-type', expressionType);
+		});
+
 		//Add More Exp
 		$(document).on("click", ".addMoreExpression", function (e) {
 			console.log(e);
@@ -164,7 +205,7 @@ function DOMReady() {
 			var countExpContainer = $(".dynamicExpressionContainer").length;
 			var html = '';
 			html += '<div class="row dynamicExpressionContainer">';
-			html += '<div class="col-md-5">';
+			html += '<div class="col-md-4">';
 			html += '<div class="form-group label-floating">';
 			html += '<label class="control-label">Expression Type</label>';
 			html += '<select name="expressionType" class="form-control">';
@@ -174,13 +215,13 @@ function DOMReady() {
 			html += '</select>';
 			html += '</div>';
 			html += '</div>';
-			html += '<div class="col-md-5">';
+			html += '<div class="col-md-4">';
 			html += '<div class="form-group label-floating">';
 			html += '<label class="control-label">Please enter expression</label>';
-			html += '<input data-type="" type="text" class="form-control" name="expression" maxlength="255">';
+			html += '<input data-expression-type="" type="text" class="form-control" name="expression" maxlength="255">';
 			html += '</div>';
 			html += '</div>';
-			html += '<div class="col-md-2">';
+			html += '<div class="col-md-4">';
 			html += '<a href="#" class="addMoreExpression btn btn-success btn-xs" title="Add More Expression"><i class="material-icons">add</i></a>';
 			html += '<a href="#" class="removeExpression btn btn-danger btn-xs" title="Remove this Expression"><i class="material-icons">remove</i></a>';
 			html += '</div>';
@@ -351,6 +392,29 @@ function createBatch(e) {
 	//var table_id = $('#tableName').val();
 	//var table_type = $('#tableName option:selected').attr('data-type');
 
+	//Reg Exp
+	var batchRegExp = [];
+	$("input[name='expression'][data-expression-type='regular_expression']").each(function (index, obj) {
+		var exp_val = $(this).val();
+		var exp_type = $(this).attr('data-expression-type');
+		item = {}
+		//item["expression_type"] = exp_type;
+		item["exp_" + (index+1)] = exp_val;
+		batchRegExp.push(item);
+	});
+	//console.log("Reg", batchRegExp);
+
+	var batchGenExp = [];
+	$("input[name='expression'][data-expression-type='generic_expression']").each(function (index, obj) {
+		var exp_val = $(this).val();
+		var exp_type = $(this).attr('data-expression-type');
+		item = {}
+		//item["expression_type"] = exp_type;
+		item["exp_" + (index+1)] = exp_val;
+		batchGenExp.push(item);
+	});
+	//console.log("Gen", batchGenExp);
+
 	var batchTable = [];
 	$("#tableName option:selected").each(function (index, obj) {
 		var id = $(this).val();
@@ -362,6 +426,9 @@ function createBatch(e) {
 		batchTable.push(item);
 	});
 
+
+
+
 	var date = $('#date').val();
 	var time = $('#timepicker').val();
 	var regex = $('#regex').val();
@@ -370,7 +437,7 @@ function createBatch(e) {
 	var postData = {
 		username: sess_username,
 		password: sess_password,
-		batch: batchTable
+		batch: { "regular_expressions": batchRegExp, "generic_expressions": batchGenExp, "data": batchTable }
 	};
 	console.log(JSON.stringify(postData));
 	var xhr = new Ajax();

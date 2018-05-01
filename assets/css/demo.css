@@ -124,3 +124,15 @@
 .login-config-content{
 	display: none;
 }
+
+/*Scroll up*/
+.scrollup {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    padding: 6px 12px !important;
+    bottom: 50px;
+    right: 5px;
+    display: none;
+    /*text-indent: -9999px;*/
+}
