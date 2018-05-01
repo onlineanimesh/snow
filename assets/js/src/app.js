@@ -138,13 +138,7 @@ function DOMReady() {
 	}
 	console.log("###### DOM is Ready ###### data-page-id = " + pageId);
 
-	if (pageId == 'login') {
-		//auth();
-		/**
-		*
-		* Login
-		*
-		*/
+	if (pageId == 'login') {		
 		var elBtnLogin = '#btnLogin';
 		var elFrmLogin = '#frmLogin';
 		var elLoginContent = '.login-content';
@@ -156,26 +150,25 @@ function DOMReady() {
 
 	if (pageId == 'operation') {
 		requiredAuth();
-
 		// Load Data
 		loadOperationPageData();
-
 		// On Clicking Create Batch
 		$('#btnCreateBatch').on('click', createBatch);
-
 		renderDataTableListBatches();
 	}
 
 	if (pageId == 'scan_result') {
 		requiredAuth();
 		renderDataTableResult();
-
 	}
 
 	if (pageId == 'configuration') {
 		requiredAuth();
 		// On click save config
 		$('#btnSaveConfiguration').on('click', saveConfiguration);
+		$('#btnSkipSaveConfiguration').on('click', function(e){
+			window.location.href = "operation.html";
+		});
 	}
 } // end of $(document).ready();
 
