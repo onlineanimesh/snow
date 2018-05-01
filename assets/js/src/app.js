@@ -249,6 +249,9 @@ function DOMReady() {
 			window.location.href = "operation.html";
 		});
 	}
+
+	$("#logout").on("click", logoutSession);
+
 } // end of $(document).ready();
 
 
@@ -331,6 +334,13 @@ function doLogin(e) {
 		//do more on complete
 	});
 
+}
+
+
+function logoutSession(e){
+	e.preventDefault();
+	sessionStorage.clear();
+	window.location.href = "index.html";
 }
 
 
